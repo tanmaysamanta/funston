@@ -6,8 +6,12 @@ const instructions = {
   '20': {
     lineNumber: 20,
     opcode: 'MOV',
-    operand1: 'A',
+    operand1: 'B',
     operand2: 10
+  },
+  '30': {
+    lineNumber: 30,
+    opcode: 'STOP'
   }
 };
 
@@ -56,22 +60,32 @@ const mov = function (registerSet, instruction) {
   return registerSet;
 };
 
+const stop = function (registerSet) {
+  registerSet.instructionPointers.NL = 0;
+
+  return registerSet;
+};
+
 const executeInstruction = function (instruction, registerSet) {
   console.table(instruction);
 
   registerSet.instructionPointers.CL = registerSet.instructionPointers.NL;
   const opcode = instruction.opcode;
   opcodes[opcode](registerSet, instruction);
-  registerSet.instructionPointers.NL += 10;
+
+  const nextLine = registerSet.instructionPointers.NL;
+  registerSet.instructionPointers.NL = nextLine && nextLine + 10;
 
   return registerSet;
 };
 
 const opcodes = {
   START: start,
-  MOV: mov
+  MOV: mov,
+  STOP: stop
 };
 
 console.table(registerSet);
 console.table(executeInstruction(instructions['10'], registerSet));
 console.table(executeInstruction(instructions['20'], registerSet));
+console.table(executeInstruction(instructions['30'], registerSet));
