@@ -38,6 +38,8 @@ const resetRegistersTo = function (registers, value) {
   for (const register in registers) {
     registers[register] = value;
   }
+
+  return registers;
 };
 
 const start = function (registerSet) {
@@ -63,6 +65,8 @@ const stop = function (registerSet) {
 const updateNextLine = function (instructionPointers) {
   const lineNumber = instructionPointers.NL;
   instructionPointers.NL = lineNumber && lineNumber + 10;
+
+  return instructionPointers;
 };
 
 const printTraceTable = function (instruction, registerSet) {
