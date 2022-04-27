@@ -22,12 +22,12 @@ const registerSet = {
   },
   dataRegisters: {
     A: 0,
-    B: 1,
-    C: 10,
+    B: 0,
+    C: 0,
     D: 0
   },
   flags: {
-    EQ: true,
+    EQ: false,
     NE: false,
     GT: false,
     LT: false
@@ -85,7 +85,6 @@ const opcodes = {
   STOP: stop
 };
 
-console.table(registerSet);
 console.table(executeInstruction(instructions['10'], registerSet));
 console.table(executeInstruction(instructions['20'], registerSet));
 console.table(executeInstruction(instructions['30'], registerSet));
