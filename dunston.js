@@ -6,7 +6,7 @@ const instructions = {
   '20': {
     lineNumber: 20,
     opcode: 'MOV',
-    operand1: 'B',
+    operand1: 'A',
     operand2: 10
   },
   '30': {
@@ -21,34 +21,28 @@ const registerSet = {
     NL: 10
   },
   dataRegisters: {
-    A: 0,
+    A: 10,
     B: 0,
     C: 0,
     D: 0
   },
   flags: {
-    EQ: false,
+    EQ: true,
     NE: false,
     GT: false,
     LT: false
   }
 };
 
-const resetFlags = function (flags) {
-  for (const flag in flags) {
-    flags[flag] = false;
-  }
-};
-
-const resetDataRegisters = function (registers) {
+const resetRegistersTo = function (registers, value) {
   for (const register in registers) {
-    registers[register] = 0;
+    registers[register] = value;
   }
 };
 
 const start = function (registerSet) {
-  resetDataRegisters(registerSet.dataRegisters);
-  resetFlags(registerSet.flags);
+  resetRegistersTo(registerSet.dataRegisters, 0);
+  resetRegistersTo(registerSet.flags, false);
 
   return registerSet;
 };
@@ -66,15 +60,34 @@ const stop = function (registerSet) {
   return registerSet;
 };
 
-const executeInstruction = function (instruction, registerSet) {
-  console.table(instruction);
+const updateNextLine = function (instructionPointers) {
+  const lineNumber = instructionPointers.NL;
+  instructionPointers.NL = lineNumber && lineNumber + 10;
+};
 
+const printTraceTable = function (instruction, registerSet) {
+  console.table(instruction);
+  console.table(registerSet);
+};
+
+const executeInstruction = function (instruction, registerSet) {
   registerSet.instructionPointers.CL = registerSet.instructionPointers.NL;
+
   const opcode = instruction.opcode;
   opcodes[opcode](registerSet, instruction);
+  updateNextLine(registerSet.instructionPointers);
 
-  const nextLine = registerSet.instructionPointers.NL;
-  registerSet.instructionPointers.NL = nextLine && nextLine + 10;
+  printTraceTable(instruction, registerSet);
+  return registerSet;
+};
+
+const runInstructions = function (instructions, registerSet) {
+  let nextLine = registerSet.instructionPointers.NL;
+
+  while (nextLine) {
+    executeInstruction(instructions[nextLine], registerSet);
+    nextLine = registerSet.instructionPointers.NL;
+  }
 
   return registerSet;
 };
@@ -85,6 +98,4 @@ const opcodes = {
   STOP: stop
 };
 
-console.table(executeInstruction(instructions['10'], registerSet));
-console.table(executeInstruction(instructions['20'], registerSet));
-console.table(executeInstruction(instructions['30'], registerSet));
+runInstructions(instructions, registerSet);
