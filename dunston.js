@@ -20,12 +20,9 @@ const printTraceTable = function (instruction, registerSet) {
   console.table(registerSet);
 };
 
-const executeInstruction = function (currentIns, nextIns, registerSet) {
-  registerSet.CL = currentIns.LN;
+const executeInstruction = function (registerSet, currentIns) {
   const opcode = currentIns.opcode;
   opcodes[opcode](registerSet, currentIns);
-  registerSet.NL = registerSet.NL && nextIns.LN;
-  printTraceTable(currentIns, registerSet);
 
   return registerSet;
 };
@@ -36,11 +33,27 @@ const getIndex = (instructions, lineNum) => {
   return index < 0 ? instructions.length : index;
 };
 
+const isPresent = (item, list) => list.includes(item);
+
+const updateNextLine = function (registerSet, currentIns, nextIns) {
+  const jumpInstructions = ['JMP', 'STOP'];
+  if (isPresent(currentIns.opcode, jumpInstructions)) {
+    return registerSet;
+  }
+
+  return registerSet.NL = nextIns.LN;
+};
+
 const runInstructions = function (instructions, registerSet) {
   registerSet.NL = instructions[0].LN;
+
   let index = 0;
   while (index < instructions.length) {
-    executeInstruction(instructions[index], instructions[index + 1], registerSet);
+    const currentIns = instructions[index];
+    registerSet.CL = currentIns.LN;
+    executeInstruction(registerSet, currentIns);
+    updateNextLine(registerSet, currentIns, instructions[index + 1]);
+    printTraceTable(currentIns, registerSet);
     index = getIndex(instructions, registerSet.NL);
   }
 

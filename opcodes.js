@@ -25,10 +25,17 @@ const stop = (registerSet) => {
   return registerSet;
 };
 
+const jmp = function (registerSet, instruction) {
+  registerSet.NL = instruction.operands[0];
+
+  return registerSet;
+};
+
 const opcodes = {
   START: start,
   MOV: mov,
-  STOP: stop
+  STOP: stop,
+  JMP: jmp
 };
 
 exports.opcodes = opcodes;
