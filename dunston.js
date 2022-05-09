@@ -1,46 +1,18 @@
 const opcodes = require('./opcodes.js').opcodes;
-
-const instructions = {
-  '10': {
-    lineNumber: 10,
-    opcode: 'START'
-  },
-  '20': {
-    lineNumber: 20,
-    opcode: 'MOV',
-    operand1: 'A',
-    operand2: 10
-  },
-  '30': {
-    lineNumber: 30,
-    opcode: 'STOP'
-  }
-};
+const stringToObject = require('./stringToObject').stringToObject;
+const fs = require('fs');
 
 const registerSet = {
-  instructionPointers: {
-    CL: 0,
-    NL: 10
-  },
-  dataRegisters: {
-    A: 10,
-    B: 0,
-    C: 0,
-    D: 0
-  },
-  flags: {
-    EQ: true,
-    NE: false,
-    GT: false,
-    LT: false
-  }
-};
-
-const updateNextLine = function (instructionPointers) {
-  const lineNumber = instructionPointers.NL;
-  instructionPointers.NL = lineNumber && lineNumber + 10;
-
-  return instructionPointers;
+  CL: 0,
+  NL: 0,
+  A: 0,
+  B: 0,
+  C: 0,
+  D: 20,
+  EQ: true,
+  NE: false,
+  GT: false,
+  LT: false
 };
 
 const printTraceTable = function (instruction, registerSet) {
@@ -48,26 +20,34 @@ const printTraceTable = function (instruction, registerSet) {
   console.table(registerSet);
 };
 
-const executeInstruction = function (instruction, registerSet) {
-  registerSet.instructionPointers.CL = registerSet.instructionPointers.NL;
+const executeInstruction = function (currentIns, nextIns, registerSet) {
+  registerSet.CL = currentIns.LN;
+  const opcode = currentIns.opcode;
+  opcodes[opcode](registerSet, currentIns);
+  registerSet.NL = registerSet.NL && nextIns.LN;
+  printTraceTable(currentIns, registerSet);
 
-  const opcode = instruction.opcode;
-  opcodes[opcode](registerSet, instruction);
-  updateNextLine(registerSet.instructionPointers);
-
-  printTraceTable(instruction, registerSet);
   return registerSet;
 };
 
-const runInstructions = function (instructions, registerSet) {
-  let nextLine = registerSet.instructionPointers.NL;
+const getIndex = (instructions, lineNum) => {
+  const index = instructions.indexOf(instructions.find((ins) => ins.LN === lineNum));
 
-  while (nextLine) {
-    executeInstruction(instructions[nextLine], registerSet);
-    nextLine = registerSet.instructionPointers.NL;
+  return index < 0 ? instructions.length : index;
+};
+
+const runInstructions = function (instructions, registerSet) {
+  registerSet.NL = instructions[0].LN;
+  let index = 0;
+  while (index < instructions.length) {
+    executeInstruction(instructions[index], instructions[index + 1], registerSet);
+    index = getIndex(instructions, registerSet.NL);
   }
 
   return registerSet;
 };
+
+const instructionsAsString = fs.readFileSync("./instructions.txt", "utf-8");
+const instructions = stringToObject(instructionsAsString);
 
 runInstructions(instructions, registerSet);

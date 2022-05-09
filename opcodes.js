@@ -1,28 +1,27 @@
-const resetRegistersTo = function (registers, value) {
-  for (const register in registers) {
-    registers[register] = value;
-  }
+const isNumber = (text) => +text === text;
+const resetRegistersTo = (registerSet, value, ...registers) => {
+  registers.forEach((register) => registerSet[register] = value);
 
-  return registers;
+  return registerSet;
 };
 
 const start = function (registerSet) {
-  resetRegistersTo(registerSet.dataRegisters, 0);
-  resetRegistersTo(registerSet.flags, false);
+  resetRegistersTo(registerSet, 0, 'A', 'B', 'C', 'D');
+  resetRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
 
   return registerSet;
 };
 
 const mov = function (registerSet, instruction) {
-  const destinationRegister = instruction.operand1;
-  registerSet.dataRegisters[destinationRegister] = instruction.operand2;
+  const [operand1, operand2] = instruction.operands;
+  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
+  registerSet[operand1] = value;
 
   return registerSet;
 };
 
-const stop = function (registerSet) {
-  registerSet.instructionPointers.NL = 0;
-
+const stop = (registerSet) => {
+  registerSet.NL = 0;
   return registerSet;
 };
 
