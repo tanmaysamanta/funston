@@ -1,10 +1,14 @@
-const toArray = (string, delimiter) => string.split(delimiter);
+const splitBy = (string, delimiter) => string.split(delimiter);
 const convertIfNumber = (string) => +string || string;
 
-const toObject = function (instruction) {
-  const [LN, opcode, operands] = toArray(instruction, " ");
+const toObject = function (string, ...keys) {
+  const object = {};
+  const values = splitBy(string, " ");
+  keys.forEach((key, index) => {
+    object[key] = values[index];
+  });
 
-  return { LN, opcode, operands };
+  return object;
 };
 
 const parseOperands = function (operands) {
@@ -12,19 +16,19 @@ const parseOperands = function (operands) {
     return [];
   }
 
-  return toArray(operands, ',').map(convertIfNumber);
+  return splitBy(operands, ',').map(convertIfNumber);
 };
 
-const parseObject = function (instruction) {
-  const LN = convertIfNumber(instruction.LN);
-  const operands = parseOperands(instruction.operands);
+const normalize = function (object) {
+  const LN = convertIfNumber(object.LN);
+  const operands = parseOperands(object.operands);
 
-  return { LN, opcode: instruction.opcode, operands };
+  return { LN, opcode: object.opcode, operands };
 };
 
-const stringToObject = (instructionsAsString) => {
-  return toArray(instructionsAsString, "\n").map((instruction) => {
-    return parseObject(toObject(instruction));
+const stringToObject = (text) => {
+  return splitBy(text, "\n").map((line) => {
+    return normalize(toObject(line, 'LN', 'opcode', 'operands'));
   });
 };
 
