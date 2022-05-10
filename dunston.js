@@ -15,9 +15,30 @@ const registerSet = {
   LT: false
 };
 
+const isPresent = (item, list) => list.includes(item);
+const getIndex = (instructions, lineNum) => {
+  const index = instructions.indexOf(instructions.find((ins) => ins.LN === lineNum));
+
+  return index < 0 ? instructions.length : index;
+};
+
 const printTraceTable = function (instruction, registerSet) {
   console.table(instruction);
   console.table(registerSet);
+};
+
+const isNextLineUpdated = (registerSet, opcode) => {
+  const jumpIns = ['JMP', 'STOP', 'JE', 'JNE', 'JLT', 'JGT', 'JLE', 'JGE'];
+  return isPresent(opcode, jumpIns) && registerSet.CL !== registerSet.NL;
+};
+
+const updateNextLine = function (registerSet, currentIns, nextIns) {
+  if (isNextLineUpdated(registerSet, currentIns.opcode)) {
+    return registerSet;
+  }
+
+  registerSet.NL = nextIns.LN;
+  return registerSet;
 };
 
 const executeInstruction = function (registerSet, currentIns) {
@@ -25,23 +46,6 @@ const executeInstruction = function (registerSet, currentIns) {
   OPCODES[opcode](registerSet, currentIns);
 
   return registerSet;
-};
-
-const getIndex = (instructions, lineNum) => {
-  const index = instructions.indexOf(instructions.find((ins) => ins.LN === lineNum));
-
-  return index < 0 ? instructions.length : index;
-};
-
-const isPresent = (item, list) => list.includes(item);
-
-const updateNextLine = function (registerSet, currentIns, nextIns) {
-  const jumpInstructions = ['JMP', 'STOP'];
-  if (isPresent(currentIns.opcode, jumpInstructions)) {
-    return registerSet;
-  }
-
-  return registerSet.NL = nextIns.LN;
 };
 
 const runInstructions = function (instructions, registerSet) {

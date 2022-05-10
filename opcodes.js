@@ -55,13 +55,13 @@ const sub = (registerSet, instruction) => {
   return registerSet;
 };
 
-const jmp = (registerSet, instruction) => {
+const jump = (registerSet, instruction) => {
   registerSet.NL = instruction.operands[0];
 
   return registerSet;
 };
 
-const cmp = (registerSet, instruction) => {
+const compare = (registerSet, instruction) => {
   setRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
   const [operand1, operand2] = operandValues(instruction.operands, registerSet);
   setRegistersTo(registerSet, true, ...getRelation(operand1, operand2));
@@ -69,14 +69,19 @@ const cmp = (registerSet, instruction) => {
   return registerSet;
 };
 
+const jumpIfEqual = (registerSet, instruction) => {
+  return registerSet.EQ ? jump(registerSet, instruction) : registerSet;
+};
+
 const OPCODES = {
   START: start,
   MOV: mov,
   STOP: stop,
-  JMP: jmp,
+  JMP: jump,
   ADD: add,
   SUB: sub,
-  CMP: cmp
+  CMP: compare,
+  JE: jumpIfEqual
 };
 
 exports.OPCODES = OPCODES;
