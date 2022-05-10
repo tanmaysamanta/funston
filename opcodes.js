@@ -5,6 +5,10 @@ const resetRegistersTo = (registerSet, value, ...registers) => {
   return registerSet;
 };
 
+const operandValue = (operand, registerSet) => {
+  return isNumber(operand) ? operand : registerSet[operand];
+};
+
 const start = function (registerSet) {
   resetRegistersTo(registerSet, 0, 'A', 'B', 'C', 'D');
   resetRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
@@ -14,8 +18,7 @@ const start = function (registerSet) {
 
 const mov = function (registerSet, instruction) {
   const [operand1, operand2] = instruction.operands;
-  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
-  registerSet[operand1] = value;
+  registerSet[operand1] = operandValue(operand2, registerSet);
 
   return registerSet;
 };
@@ -25,24 +28,22 @@ const stop = (registerSet) => {
   return registerSet;
 };
 
-const jmp = (registerSet, instruction) => {
-  registerSet.NL = instruction.operands[0];
-
-  return registerSet;
-};
-
 const add = (registerSet, instruction) => {
   const [operand1, operand2] = instruction.operands;
-  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
-  registerSet[operand1] += value;
+  registerSet[operand1] += operandValue(operand2, registerSet);
 
   return registerSet;
 };
 
 const sub = (registerSet, instruction) => {
   const [operand1, operand2] = instruction.operands;
-  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
-  registerSet[operand1] -= value;
+  registerSet[operand1] -= operandValue(operand2, registerSet);
+
+  return registerSet;
+};
+
+const jmp = (registerSet, instruction) => {
+  registerSet.NL = instruction.operands[0];
 
   return registerSet;
 };
