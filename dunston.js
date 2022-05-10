@@ -1,7 +1,9 @@
 const fs = require('fs');
 const OPCODES = require('./opcodes.js').OPCODES;
 const stringToObject = require('./stringToObject').stringToObject;
+const generateTable = require('./traceTable.js').generateTable;
 
+const traceTable = [];
 const registerSet = {
   CL: 0,
   NL: 0,
@@ -25,6 +27,7 @@ const getLineIndex = (lineNum, instructions) => {
 const printTraceTable = function (instruction, registerSet) {
   console.table(instruction);
   console.table(registerSet);
+  traceTable.push(JSON.parse(JSON.stringify({ ...instruction, ...registerSet })));
 };
 
 const isNextLineUpdated = (registerSet, opcode) => {
@@ -72,3 +75,4 @@ const main = function (filename) {
 };
 
 main(process.argv.slice(2)[0]);
+generateTable(traceTable);
