@@ -72,7 +72,7 @@ const main = function (filename) {
   const instructionsAsString = fs.readFileSync(filename, "utf-8");
   const instructions = stringToObject(instructionsAsString);
   runInstructions(instructions, registerSet);
+  generateTable(traceTable);
 };
 
 main(process.argv.slice(2)[0]);
-generateTable(traceTable);
