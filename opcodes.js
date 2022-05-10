@@ -85,6 +85,16 @@ const jumpIfLessThan = (registerSet, instruction) => {
   return registerSet.LT ? jump(registerSet, instruction) : registerSet;
 };
 
+const jumpIfGTOrEQ = (registerSet, instruction) => {
+  return registerSet.GT || registerSet.EQ ?
+    jump(registerSet, instruction) : registerSet;
+};
+
+const jumpIfLTOrEQ = (registerSet, instruction) => {
+  return registerSet.LT || registerSet.EQ ?
+    jump(registerSet, instruction) : registerSet;
+};
+
 const OPCODES = {
   START: start,
   MOV: mov,
@@ -96,7 +106,9 @@ const OPCODES = {
   JE: jumpIfEqual,
   JNE: jumpIfNotEqual,
   JGT: jumpIfGreaterThan,
-  JLT: jumpIfLessThan
+  JLT: jumpIfLessThan,
+  JGE: jumpIfGTOrEQ,
+  JLE: jumpIfLTOrEQ
 };
 
 exports.OPCODES = OPCODES;
