@@ -25,8 +25,24 @@ const stop = (registerSet) => {
   return registerSet;
 };
 
-const jmp = function (registerSet, instruction) {
+const jmp = (registerSet, instruction) => {
   registerSet.NL = instruction.operands[0];
+
+  return registerSet;
+};
+
+const add = (registerSet, instruction) => {
+  const [operand1, operand2] = instruction.operands;
+  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
+  registerSet[operand1] += value;
+
+  return registerSet;
+};
+
+const sub = (registerSet, instruction) => {
+  const [operand1, operand2] = instruction.operands;
+  const value = isNumber(operand2) ? operand2 : registerSet[operand2];
+  registerSet[operand1] -= value;
 
   return registerSet;
 };
@@ -35,7 +51,9 @@ const opcodes = {
   START: start,
   MOV: mov,
   STOP: stop,
-  JMP: jmp
+  JMP: jmp,
+  ADD: add,
+  SUB: sub
 };
 
 exports.opcodes = opcodes;
