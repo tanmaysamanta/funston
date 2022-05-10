@@ -1,4 +1,4 @@
-const opcodes = require('./opcodes.js').opcodes;
+const OPCODES = require('./opcodes.js').OPCODES;
 const stringToObject = require('./stringToObject').stringToObject;
 const fs = require('fs');
 
@@ -22,7 +22,7 @@ const printTraceTable = function (instruction, registerSet) {
 
 const executeInstruction = function (registerSet, currentIns) {
   const opcode = currentIns.opcode;
-  opcodes[opcode](registerSet, currentIns);
+  OPCODES[opcode](registerSet, currentIns);
 
   return registerSet;
 };

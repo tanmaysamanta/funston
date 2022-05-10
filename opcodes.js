@@ -1,5 +1,5 @@
 const isNumber = (text) => +text === text;
-const resetRegistersTo = (registerSet, value, ...registers) => {
+const setRegistersTo = (registerSet, value, ...registers) => {
   registers.forEach((register) => registerSet[register] = value);
 
   return registerSet;
@@ -9,9 +9,22 @@ const operandValue = (operand, registerSet) => {
   return isNumber(operand) ? operand : registerSet[operand];
 };
 
+const operandValues = (operands, registerSet) => operands.map((operand) => {
+  return operandValue(operand, registerSet);
+});
+
+const getRelation = function (operand1, operand2) {
+  const statusFlags = {
+    true: { false: ['EQ'] },
+    false: { true: ['NE', 'LT'], false: ['NE', 'GT'] }
+  };
+
+  return statusFlags[operand1 === operand2][operand1 < operand2];
+};
+
 const start = function (registerSet) {
-  resetRegistersTo(registerSet, 0, 'A', 'B', 'C', 'D');
-  resetRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
+  setRegistersTo(registerSet, 0, 'A', 'B', 'C', 'D');
+  setRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
 
   return registerSet;
 };
@@ -48,13 +61,22 @@ const jmp = (registerSet, instruction) => {
   return registerSet;
 };
 
-const opcodes = {
+const cmp = (registerSet, instruction) => {
+  setRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
+  const [operand1, operand2] = operandValues(instruction.operands, registerSet);
+  setRegistersTo(registerSet, true, ...getRelation(operand1, operand2));
+
+  return registerSet;
+};
+
+const OPCODES = {
   START: start,
   MOV: mov,
   STOP: stop,
   JMP: jmp,
   ADD: add,
-  SUB: sub
+  SUB: sub,
+  CMP: cmp
 };
 
-exports.opcodes = opcodes;
+exports.OPCODES = OPCODES;
