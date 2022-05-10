@@ -1,6 +1,6 @@
+const fs = require('fs');
 const OPCODES = require('./opcodes.js').OPCODES;
 const stringToObject = require('./stringToObject').stringToObject;
-const fs = require('fs');
 
 const registerSet = {
   CL: 0,
@@ -64,7 +64,12 @@ const runInstructions = function (instructions, registerSet) {
   return registerSet;
 };
 
-const instructionsAsString = fs.readFileSync("./instructions.txt", "utf-8");
-const instructions = stringToObject(instructionsAsString);
+const readFile = (filename) => fs.readFileSync(filename, 'utf8');
 
-runInstructions(instructions, registerSet);
+const main = function (filename) {
+  const instructionsAsString = fs.readFileSync(filename, "utf-8");
+  const instructions = stringToObject(instructionsAsString);
+  runInstructions(instructions, registerSet);
+};
+
+main(process.argv.slice(2)[0]);
