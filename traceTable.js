@@ -1,8 +1,8 @@
 const fs = require('fs');
 
-const row = (fields) => '|' + fields.join('|') + '|\n';
+const row = (fields) => fields.join('|') + '\n';
 const divider = (fieldsCount) =>
-  '|' + Array(fieldsCount).fill('---').join('|') + '|\n';
+  Array(fieldsCount).fill('---').join('|') + '\n';
 
 const generateTable = function (records) {
   let table = '';

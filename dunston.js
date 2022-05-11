@@ -1,6 +1,6 @@
 const fs = require('fs');
 const OPCODES = require('./opcodes.js').OPCODES;
-const stringToObject = require('./stringToObject').stringToObject;
+const parseToObject = require('./parseContent.js').parseToObject;
 const generateTable = require('./traceTable.js').generateTable;
 
 const TRACETABLE = [];
@@ -37,18 +37,14 @@ const isNextLineUpdated = (registerSet, opcode) => {
 
 const updateNextLine = function (registerSet, currentIns, nextIns) {
   if (isNextLineUpdated(registerSet, currentIns.opcode)) {
-    return registerSet;
+    return registerSet.NL;
   }
 
-  registerSet.NL = nextIns.LN;
-  return registerSet;
+  return nextIns.LN;
 };
 
-const executeInstruction = function (registerSet, currentIns) {
-  const opcode = currentIns.opcode;
-  registerSet = OPCODES[opcode](registerSet, currentIns);
-
-  return registerSet;
+const executeInstruction = (registerSet, currentIns) => {
+  return OPCODES[currentIns.opcode](registerSet, currentIns);
 };
 
 const runInstructions = function (instructions, registerSet) {
@@ -57,11 +53,13 @@ const runInstructions = function (instructions, registerSet) {
   let index = 0;
   while (index < instructions.length) {
     const currentIns = instructions[index];
+
     registerSet.CL = currentIns.LN;
     registerSet = executeInstruction(registerSet, currentIns);
-    registerSet = updateNextLine(
+    registerSet.NL = updateNextLine(
       registerSet, currentIns, instructions[index + 1]);
     updateTraceTable(currentIns, registerSet);
+
     index = getLineIndex(registerSet.NL, instructions);
   }
 
@@ -70,7 +68,7 @@ const runInstructions = function (instructions, registerSet) {
 
 const main = function (filename) {
   const instructionsAsString = fs.readFileSync(filename, 'utf-8');
-  const instructions = stringToObject(instructionsAsString);
+  const instructions = parseToObject(instructionsAsString);
   runInstructions(instructions, registerSet);
   generateTable(TRACETABLE);
 };

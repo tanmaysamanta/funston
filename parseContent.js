@@ -26,10 +26,10 @@ const normalize = function (object) {
   return { LN, opcode: object.opcode, operands };
 };
 
-const stringToObject = (text) => {
-  return splitBy(text, '\n').map((line) => {
+const parseToObject = (content) => {
+  return splitBy(content, '\n').map((line) => {
     return normalize(toObject(line, 'LN', 'opcode', 'operands'));
   });
 };
 
-exports.stringToObject = stringToObject;
+exports.parseToObject = parseToObject;
