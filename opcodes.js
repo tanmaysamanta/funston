@@ -37,7 +37,7 @@ const mov = function (registerSet, instruction) {
 };
 
 const stop = (registerSet) => {
-  registerSet.NL = 0;
+  registerSet.NL = null;
   return registerSet;
 };
 
