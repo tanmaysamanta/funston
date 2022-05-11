@@ -3,7 +3,7 @@ const convertIfNumber = (string) => +string || string;
 
 const toObject = function (string, ...keys) {
   const object = {};
-  const values = splitBy(string, " ");
+  const values = splitBy(string, /\s+/);
   keys.forEach((key, index) => {
     object[key] = values[index];
   });
