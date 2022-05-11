@@ -27,7 +27,7 @@ const normalize = function (object) {
 };
 
 const stringToObject = (text) => {
-  return splitBy(text, "\n").map((line) => {
+  return splitBy(text, '\n').map((line) => {
     return normalize(toObject(line, 'LN', 'opcode', 'operands'));
   });
 };

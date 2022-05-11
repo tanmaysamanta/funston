@@ -1,8 +1,8 @@
-const fs = require("fs");
+const fs = require('fs');
 
-const row = (fields) => "|" + fields.join("|") + "|\n";
+const row = (fields) => '|' + fields.join('|') + '|\n';
 const divider = (fieldsCount) =>
-  "|" + Array(fieldsCount).fill('---').join("|") + "|\n";
+  '|' + Array(fieldsCount).fill('---').join('|') + '|\n';
 
 const generateTable = function (records) {
   let table = '';
@@ -14,7 +14,7 @@ const generateTable = function (records) {
     table += row(Object.values(record));
   });
 
-  fs.writeFileSync("./table.md", table, 'utf8');
+  fs.writeFileSync('./table.md', table, 'utf8');
   return table;
 };
 

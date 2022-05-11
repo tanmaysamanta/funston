@@ -19,13 +19,15 @@ const registerSet = {
 
 const isPresent = (item, list) => list.includes(item);
 const getLineIndex = (lineNum, instructions) => {
-  const index = instructions.indexOf(instructions.find((ins) => ins.LN === lineNum));
+  const index = instructions.indexOf(instructions.find((ins) =>
+    ins.LN === lineNum));
 
   return index < 0 ? instructions.length : index;
 };
 
 const updateTraceTable = function (instruction, registerSet) {
-  TRACETABLE.push(JSON.parse(JSON.stringify({ ...instruction, ...registerSet })));
+  TRACETABLE.push(JSON.parse(JSON.stringify(
+    { ...instruction, ...registerSet })));
 };
 
 const isNextLineUpdated = (registerSet, opcode) => {
@@ -55,10 +57,10 @@ const runInstructions = function (instructions, registerSet) {
   let index = 0;
   while (index < instructions.length) {
     const currentIns = instructions[index];
-    const nextIns = instructions[index + 1];
     registerSet.CL = currentIns.LN;
     registerSet = executeInstruction(registerSet, currentIns);
-    registerSet = updateNextLine(registerSet, currentIns, nextIns);
+    registerSet = updateNextLine(
+      registerSet, currentIns, instructions[index + 1]);
     updateTraceTable(currentIns, registerSet);
     index = getLineIndex(registerSet.NL, instructions);
   }
@@ -67,7 +69,7 @@ const runInstructions = function (instructions, registerSet) {
 };
 
 const main = function (filename) {
-  const instructionsAsString = fs.readFileSync(filename, "utf-8");
+  const instructionsAsString = fs.readFileSync(filename, 'utf-8');
   const instructions = stringToObject(instructionsAsString);
   runInstructions(instructions, registerSet);
   generateTable(TRACETABLE);
