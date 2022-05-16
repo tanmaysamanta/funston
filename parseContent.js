@@ -1,5 +1,5 @@
 const splitBy = (string, delimiter) => string.split(delimiter);
-const convertIfNumber = (string) => +string || string;
+const convertIfNumber = (string) => !isNaN(string) ? +string : string;
 
 const toObject = function (string, ...keys) {
   const object = {};

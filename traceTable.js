@@ -14,6 +14,9 @@ const generateTable = function (records) {
     table += row(Object.values(record));
   });
 
+  table = table.replaceAll('false', 0);
+  table = table.replaceAll('true', 1);
+
   fs.writeFileSync('./table.md', table, 'utf8');
   return table;
 };
