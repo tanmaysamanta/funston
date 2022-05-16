@@ -66,8 +66,16 @@ const runInstructions = function (instructions, registerSet) {
   return registerSet;
 };
 
+const readFile = function (filename) {
+  try {
+    return fs.readFileSync(filename, 'utf-8');
+  } catch (error) {
+    throw 'File not found'
+  }
+};
+
 const main = function (filename) {
-  const instructionsAsString = fs.readFileSync(filename, 'utf-8');
+  const instructionsAsString = readFile(filename);
   const instructions = parseToObject(instructionsAsString);
   runInstructions(instructions, registerSet);
   generateTable(TRACETABLE);
