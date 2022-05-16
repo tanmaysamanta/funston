@@ -10,9 +10,7 @@ const generateTable = function (records) {
   table += row(headers);
   table += divider(headers.length);
 
-  records.forEach(record => {
-    table += row(Object.values(record));
-  });
+  records.forEach(record => { table += row(Object.values(record)); });
 
   table = table.replaceAll('false', 0);
   table = table.replaceAll('true', 1);
