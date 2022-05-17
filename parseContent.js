@@ -1,35 +1,20 @@
-const splitBy = (string, delimiter) => string.split(delimiter);
 const convertIfNumber = (string) => !isNaN(string) ? +string : string;
-
-const toObject = function (string, ...keys) {
-  const object = {};
-  const values = splitBy(string, /\s+/);
-  keys.forEach((key, index) => {
-    object[key] = values[index];
-  });
-
-  return object;
-};
 
 const parseOperands = function (operands) {
   if (!operands) {
     return [];
   }
 
-  return splitBy(operands, ',').map(convertIfNumber);
+  return operands.split(',').map(convertIfNumber);
 };
 
-const normalize = function (object) {
-  const LN = convertIfNumber(object.LN);
-  const operands = parseOperands(object.operands);
+const parseLine = (line) => {
+  const [LN, opcode, operands] = line.split(/\s+/);
+  return { LN: +LN, opcode, operands: parseOperands(operands) };
+}
 
-  return { LN, opcode: object.opcode, operands };
+const parse = (content) => {
+  return content.split('\n').map(parseLine);
 };
 
-const parseToObject = (content) => {
-  return splitBy(content, '\n').map((line) => {
-    return normalize(toObject(line, 'LN', 'opcode', 'operands'));
-  });
-};
-
-exports.parseToObject = parseToObject;
+exports.parse = parse;

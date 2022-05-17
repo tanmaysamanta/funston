@@ -1,6 +1,6 @@
 const fs = require('fs');
 const OPCODES = require('./opcodes.js').OPCODES;
-const parseToObject = require('./parseContent.js').parseToObject;
+const parse = require('./parseContent.js').parse;
 const generateTable = require('./traceTable.js').generateTable;
 
 const TRACETABLE = [];
@@ -70,13 +70,13 @@ const readFile = function (filename) {
   try {
     return fs.readFileSync(filename, 'utf-8');
   } catch (error) {
-    throw 'File not found'
+    throw filename + ' not found'
   }
 };
 
 const main = function (filename) {
   const instructionsAsString = readFile(filename);
-  const instructions = parseToObject(instructionsAsString);
+  const instructions = parse(instructionsAsString);
   runInstructions(instructions, registerSet);
   generateTable(TRACETABLE);
 };
