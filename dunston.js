@@ -17,8 +17,6 @@ const registerSet = {
   LT: false
 };
 
-const isPresent = (item, list) => list.includes(item);
-
 const getLineIndex = (lineNum, instructions) => {
   const index = instructions.indexOf(instructions.find((ins) =>
     ins.LN === lineNum));
@@ -31,19 +29,6 @@ const updateTraceTable = function (instruction, registerSet) {
     { ...instruction, ...registerSet })));
 };
 
-const isNextLineUpdated = (registerSet, opcode) => {
-  const jumpIns = ['JMP', 'STOP', 'JE', 'JNE', 'JLT', 'JGT', 'JLE', 'JGE'];
-  return isPresent(opcode, jumpIns) && registerSet.CL !== registerSet.NL;
-};
-
-const updateNextLine = function (registerSet, currentIns, nextIns) {
-  if (isNextLineUpdated(registerSet, currentIns.opcode)) {
-    return registerSet.NL;
-  }
-
-  return nextIns.LN;
-};
-
 const executeInstruction = (registerSet, currentIns) => {
   return OPCODES[currentIns.opcode](registerSet, currentIns);
 };
@@ -54,11 +39,11 @@ const runInstructions = function (instructions, registerSet) {
   let index = 0;
   while (index < instructions.length) {
     const currentIns = instructions[index];
+    const nextIns = instructions[index + 1];
 
     registerSet.CL = currentIns.LN;
+    registerSet.NL = nextIns ? nextIns.LN : null;
     registerSet = executeInstruction(registerSet, currentIns);
-    registerSet.NL = updateNextLine(
-      registerSet, currentIns, instructions[index + 1]);
     updateTraceTable(currentIns, registerSet);
 
     index = getLineIndex(registerSet.NL, instructions);
