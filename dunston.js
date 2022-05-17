@@ -18,6 +18,7 @@ const registerSet = {
 };
 
 const isPresent = (item, list) => list.includes(item);
+
 const getLineIndex = (lineNum, instructions) => {
   const index = instructions.indexOf(instructions.find((ins) =>
     ins.LN === lineNum));
