@@ -1,38 +1,10 @@
 const start = require('./opcodes/start.js').start;
 const stop = require('./opcodes/stop.js').stop;
-
-const isNumber = (text) => +text === text;
-
-const resetFlags = (registerSet) => {
-  registerSet.EQ = false;
-  registerSet.NE = false;
-  registerSet.GT = false;
-  registerSet.LT = false;
-
-  return registerSet;
-};
-
-const operandValue = (operand, registerSet) => {
-  return isNumber(operand) ? operand : registerSet[operand];
-};
-
-const operandValues = (operands, registerSet) => operands.map((operand) => {
-  return operandValue(operand, registerSet);
-});
-
-const mov = function (registerSet, instruction) {
-  const [operand1, operand2] = instruction.operands;
-  registerSet[operand1] = operandValue(operand2, registerSet);
-
-  return registerSet;
-};
-
-const add = (registerSet, instruction) => {
-  const [operand1, operand2] = instruction.operands;
-  registerSet[operand1] += operandValue(operand2, registerSet);
-
-  return registerSet;
-};
+const mov = require('./opcodes/mov.js').mov;
+const add = require('./opcodes/add.js').add;
+const operandValues = require('./helpers.js').operandValues;
+const operandValue = require('./helpers.js').operandValue;
+const resetFlags = require('./helpers.js').resetFlags;
 
 const sub = (registerSet, instruction) => {
   const [operand1, operand2] = instruction.operands;
