@@ -2,34 +2,11 @@ const start = require('./opcodes/start.js').start;
 const stop = require('./opcodes/stop.js').stop;
 const mov = require('./opcodes/mov.js').mov;
 const add = require('./opcodes/add.js').add;
-const operandValues = require('./helpers.js').operandValues;
-const operandValue = require('./helpers.js').operandValue;
-const resetFlags = require('./helpers.js').resetFlags;
-
-const sub = (registerSet, instruction) => {
-  const [operand1, operand2] = instruction.operands;
-  registerSet[operand1] -= operandValue(operand2, registerSet);
-
-  return registerSet;
-};
+const sub = require('./opcodes/sub.js').sub;
+const compare = require('./opcodes/compare.js').compare;
 
 const jump = (registerSet, instruction) => {
   registerSet.NL = instruction.operands[0];
-
-  return registerSet;
-};
-
-const compare = (registerSet, instruction) => {
-  resetFlags(registerSet);
-  const [operand1, operand2] = operandValues(instruction.operands, registerSet);
-
-  if (operand1 === operand2) {
-    registerSet['EQ'] = true;
-  } else {
-    registerSet['NE'] = true;
-    const flag = operand1 > operand2 ? 'GT' : 'LT';
-    registerSet[flag] = true;
-  }
 
   return registerSet;
 };

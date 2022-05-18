@@ -30,7 +30,8 @@ const updateTraceTable = function (instruction, registerSet) {
 };
 
 const executeInstruction = (registerSet, currentIns) => {
-  return OPCODES[currentIns.opcode](registerSet, currentIns);
+  const opcode = currentIns.opcode;
+  return OPCODES[opcode](registerSet, currentIns);
 };
 
 const runInstructions = function (instructions, registerSet) {
