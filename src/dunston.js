@@ -67,4 +67,4 @@ const main = function (filename) {
   generateTable(TRACETABLE);
 };
 
-main(process.argv.slice(2)[0]);
+exports.main = main;
