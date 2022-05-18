@@ -1,6 +1,19 @@
 const isNumber = (text) => +text === text;
-const setRegistersTo = (registerSet, value, ...registers) => {
-  registers.forEach((register) => registerSet[register] = value);
+
+const resetRegisters = (registerSet) => {
+  registerSet.A = 0;
+  registerSet.B = 0;
+  registerSet.C = 0;
+  registerSet.D = 0;
+
+  return registerSet;
+};
+
+const resetFlags = (registerSet) => {
+  registerSet.EQ = false;
+  registerSet.NE = false;
+  registerSet.GT = false;
+  registerSet.LT = false;
 
   return registerSet;
 };
@@ -13,18 +26,9 @@ const operandValues = (operands, registerSet) => operands.map((operand) => {
   return operandValue(operand, registerSet);
 });
 
-const getRelation = function (operand1, operand2) {
-  const statusFlags = {
-    true: { false: ['EQ'] },
-    false: { true: ['NE', 'LT'], false: ['NE', 'GT'] }
-  };
-
-  return statusFlags[operand1 === operand2][operand1 < operand2];
-};
-
 const start = function (registerSet) {
-  setRegistersTo(registerSet, 0, 'A', 'B', 'C', 'D');
-  setRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
+  resetRegisters(registerSet);
+  resetFlags(registerSet);
 
   return registerSet;
 };
@@ -62,28 +66,28 @@ const jump = (registerSet, instruction) => {
 };
 
 const compare = (registerSet, instruction) => {
-  setRegistersTo(registerSet, false, 'EQ', 'NE', 'GT', 'LT');
+  resetFlags(registerSet);
   const [operand1, operand2] = operandValues(instruction.operands, registerSet);
-  setRegistersTo(registerSet, true, ...getRelation(operand1, operand2));
+
+  if (operand1 === operand2) {
+    registerSet['EQ'] = true;
+  } else {
+    registerSet['NE'] = true;
+    const flag = operand1 > operand2 ? 'GT' : 'LT';
+    registerSet[flag] = true;
+  }
 
   return registerSet;
 };
 
-const jumpIfEqual = (registerSet, instruction) => {
-  return registerSet.EQ ? jump(registerSet, instruction) : registerSet;
+const jumpIfFlag = (flag, registerSet, instruction) => {
+  return registerSet[flag] ? jump(registerSet, instruction) : registerSet;
 };
 
-const jumpIfNotEqual = (registerSet, instruction) => {
-  return registerSet.NE ? jump(registerSet, instruction) : registerSet;
-};
-
-const jumpIfGreaterThan = (registerSet, instruction) => {
-  return registerSet.GT ? jump(registerSet, instruction) : registerSet;
-};
-
-const jumpIfLessThan = (registerSet, instruction) => {
-  return registerSet.LT ? jump(registerSet, instruction) : registerSet;
-};
+const jumpIfEqual = jumpIfFlag.bind(null, 'EQ');
+const jumpIfNotEqual = jumpIfFlag.bind(null, 'NE');
+const jumpIfGreaterThan = jumpIfFlag.bind(null, 'GT');
+const jumpIfLessThan = jumpIfFlag.bind(null, 'LT');
 
 const jumpIfGTOrEQ = (registerSet, instruction) => {
   return registerSet.GT || registerSet.EQ ?
