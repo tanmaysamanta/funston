@@ -1,13 +1,7 @@
+const start = require('./opcodes/start.js').start;
+const stop = require('./opcodes/stop.js').stop;
+
 const isNumber = (text) => +text === text;
-
-const resetRegisters = (registerSet) => {
-  registerSet.A = 0;
-  registerSet.B = 0;
-  registerSet.C = 0;
-  registerSet.D = 0;
-
-  return registerSet;
-};
 
 const resetFlags = (registerSet) => {
   registerSet.EQ = false;
@@ -26,22 +20,10 @@ const operandValues = (operands, registerSet) => operands.map((operand) => {
   return operandValue(operand, registerSet);
 });
 
-const start = function (registerSet) {
-  resetRegisters(registerSet);
-  resetFlags(registerSet);
-
-  return registerSet;
-};
-
 const mov = function (registerSet, instruction) {
   const [operand1, operand2] = instruction.operands;
   registerSet[operand1] = operandValue(operand2, registerSet);
 
-  return registerSet;
-};
-
-const stop = (registerSet) => {
-  registerSet.NL = null;
   return registerSet;
 };
 
